@@ -23,10 +23,12 @@ library(maps)
 library(mapproj)
 library(ggplot2)
 
+
+#----------------------------------For Obesity Rate----------------------------------
 #Loading the data of Obesity rate and Fast Foood Restaurant
 obesity <- read.csv(file = 'C:/Users/F.R.I.E.N.D.S/Desktop/BigDataChallange/Obesity in different countries at different time-cleaned.csv')
 
-#----------------------------------For Obesity Rate----------------------------------
+
 # Since our Obesity data has all the countries data, we filter the data
 # of the USA using the filter function.
 obesityUSA <- obesity %>% filter(Country == "United States of America")
@@ -39,6 +41,8 @@ names(obesityUSA)
 # Creating a table containing Year, Obesity rate and Sex.
 obesityUSA <- obesityUSA %>% group_by(Year, Obesity...., Sex)%>%
   dplyr::summarise(count = n())
+
+head(obesityUSA)
 
 # Filtering the obesity rate of male 
 maleObesity <- obesityUSA %>% filter(Sex == 'Male')
@@ -58,6 +62,12 @@ FemaleObesity$Obesity.... <- gsub(' .*', '', FemaleObesity$Obesity....)
 # Extracting the rate of obesity in bothsexes
 bothSexesObesity$Obesity.... <- gsub(' .*', '', bothSexesObesity$Obesity....)
 
+#Checking the quantile of the all group
+quantile(as.numeric(maleObesity$Obesity....))
+quantile(as.numeric(FemaleObesity$Obesity....))
+quantile(as.numeric(bothSexesObesity$Obesity....))
+
+
 
 # Creating space to include three graph in one figure. The par function
 # takes one argument mfrow that signifies how many rows and column are require.
@@ -74,13 +84,13 @@ plot(bothSexesObesity$Year, bothSexesObesity$Obesity...., ylim = c(1, 50), ylab 
 # between male and female in one graph.
 par(mfrow = c(1, 1))
 # Plotting male obesity vs year graph
-plot(maleObesity$Year,maleObesity$Obesity....,type="l",col="red")
+plot(maleObesity$Year,maleObesity$Obesity....,type="l",col="red", xlab = 'Year', ylab = 'Obesity Rate')
 #Adding the rate of Female Obesity in the graph above
 lines(maleObesity$Year,FemaleObesity$Obesity....,col="green")
 # Creating an index to distinguish between two graph.
 legend("topleft",
        c("Male Obesity","Female Obesity"),
-       fill=c("red","green")
+       fill=c("red","green"), 
 )
 #----------------------------------------------------------------------------------------------------------------------------
 
@@ -231,6 +241,6 @@ myColor <- colorNumeric(palette = 'RdYlBu', domain = c(1:2300))
 # more restaurant in the west and east side than the middle.
 USA %>%
   leaflet() %>%
-  addProviderTiles('CartoDB') %>%
+  addProviderTiles('CartoDB') %>% 
   addCircleMarkers(radius = 1, color = ~myColor(count))
-
+#----------------------------------------------------------------------------------------------------------
